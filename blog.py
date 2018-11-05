@@ -5,13 +5,13 @@ import jinja2
 from flask_sqlalchemy import SQLAlchemy
 
 
+
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape=True)
 
-
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+ pymysql://build_a_blog:9QDJJZuXsCm1UvoW@localhost:8889/build_a_blog' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build_a_blog:9QDJJZuXsCm1UvoW@localhost:8889/build_a_blog' 
 app.config['SQLALCHEMY_ECHO']= True
 
 db = SQLAlchemy(app)
@@ -25,8 +25,8 @@ class Post(db.Model):
         self.title = title
         self.content = content
 
-@app.route('/blog', methods=['GET'])
-def blog():
+@app.route('/ blog', methods=['GET'])
+def index():
 
     if request.args.get('post_id'):
         post_id = request.args.get('post_id')
@@ -38,7 +38,7 @@ def blog():
     
     return render_template('posts.html',title="It's a Blog!",posts=posts)
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/ add.html', methods=['GET','POST'])
 def newpost():
     if request.method == 'POST':
         title = request.form['title']
@@ -53,9 +53,8 @@ def newpost():
         
         db.session.add(post)
         db.session.commit()
-
-
-        return redirect('/blog?post_id={}'.format(post.id))
+        
+        return redirect('/ blog?post_id={}'.format(post.id))
 
     return render_template('add.html',title = "Add a Blog Entry!")
 
