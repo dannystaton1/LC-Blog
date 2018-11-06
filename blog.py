@@ -25,20 +25,9 @@ class Post(db.Model):
         self.title = title
         self.content = content
 
-@app.route('/ blog', methods=['GET'])
-def index():
 
-    if request.args.get('post_id'):
-        post_id = request.args.get('post_id')
-        post = Post.query.get(post_id)
 
-        return render_template('post.html',title = "It's a blog!",post_title = post.title,content = post.content)
-
-    posts = Post.query.all()
-    
-    return render_template('posts.html',title="It's a Blog!",posts=posts)
-
-@app.route('/ add.html', methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'])
 def newpost():
     if request.method == 'POST':
         title = request.form['title']
@@ -54,9 +43,27 @@ def newpost():
         db.session.add(post)
         db.session.commit()
         
-        return redirect('/ blog?post_id={}'.format(post.id))
+        return redirect('post.html?post_id={}'.format(post.id))
 
     return render_template('add.html',title = "Add a Blog Entry!")
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+
+    
+    
+    if request.args.get('post_id'):
+        post_id = request.args.get('post_id')
+        post = Post.query.get(post_id)
+
+        return render_template('post.html',title = "It's a blog!",post_title = post.title,content = post.content)
+
+    posts = Post.query.all()
+    
+    return render_template('posts.html',title="It's a Blog!",posts=posts)
+
+
 
 if __name__ == '__main__':
     app.run()
